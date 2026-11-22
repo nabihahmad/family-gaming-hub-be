@@ -1,0 +1,42 @@
+{
+  "name": "family-gaming-hub-be",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "lint": "eslint src test",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "test": "vitest run",
+    "seed": "tsx src/cards/seed.ts",
+    "seed:admin": "tsx src/auth/seedAdmin.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "mongodb": "^6.17.0",
+    "ws": "^8.18.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.16.5",
+    "@types/ws": "^8.18.1",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.1",
+    "globals": "^15.15.0",
+    "prettier": "^3.7.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.56.1",
+    "vitest": "^5.1.1"
+  }
+}
