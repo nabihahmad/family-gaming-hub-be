@@ -253,10 +253,10 @@ All require `Authorization: Bearer ${ADMIN_TOKEN}` (constant-time comparison); r
   - `night`: run roles in the canonical order (doppelganger, werewolf, minion, mason, seer, robber, troublemaker, drunk, insomniac). Only roles present in the game take a step. For each step, the server sends the prompt only to the acting player(s); everyone else gets a neutral "night" view. **Each step has a minimum duration (e.g. 8–15 seconds) even if no player acts or the player acts quickly**, so timing doesn't reveal who holds which role. Roles that exist only in the center still run their step on a timer.
   - Each role is a small module: `(state, action) => { state, privateResult }`, with a validated action schema. Actions are `night_action` `{ targets: string[] }` where targets are player ids or `center:0|1|2`.
   - `day`: a timer (default 5 minutes, configurable) with `endsAt`; host can end it early.
-  - `vote`: `vote` `{ target }`, secret until all have voted (or timer end).
-  - `result`: reveal everyone's final role (after swaps), compute the winners (werewolf team, villager team, tanner), handle ties and the hunter's chain kill. Document the rules in code comments.
+  - `vote`: `vote` `{ target }`, secret until all have voted or the 10-second timer expires. The host may end the day early to start this vote.
+  - `result`: reveal everyone's final role (after swaps), compute the winners (werewolf team, villager team, tanner), and handle ties and the hunter's chain kill. A tie kills nobody and gives the Werewolf team the win.
 - Views: never reveal original/current roles other than what the player legitimately learned; the view includes the player's *original* role card (as dealt) and any private night results they received.
-- Events: `ack_role`, `night_action`, `vote`, `end_day` (host), `end_game` (host; ends the day early and reveals roles), `next_game` (host).
+- Events: `ack_role`, `night_action`, `vote`, `end_day` (host), `end_game` (host; ends the discussion early and starts the 10-second vote), `next_game` (host).
 
 ## 8. Security and robustness
 

@@ -200,6 +200,8 @@ describe("Werewolves", () => {
 
     werewolvesGame.handle(state, "p1", event("end_day"), ctx);
     expect(state.phase).toBe("vote");
+    expect(state.voteEndsAt).toBe(now + 10_000);
+    expect(JSON.stringify(werewolvesGame.view(state, "p2", ctx.players, ctx.options))).not.toContain('"roles"');
     werewolvesGame.handle(state, "p1", event("vote", { target: "p2" }), ctx);
     expect(JSON.stringify(werewolvesGame.view(state, "p2", ctx.players, ctx.options))).not.toContain('"p2":"p2"');
     werewolvesGame.handle(state, "p2", event("vote", { target: "p1" }), ctx);
@@ -230,7 +232,7 @@ describe("Werewolves", () => {
     ).toThrow();
   });
 
-  it("allows ending during the day to reveal final roles before the timer expires", () => {
+  it("starts the timed vote when the host ends the day early", () => {
     const ctx = context(
       { lang: "en", roles: ["werewolf", "seer", "robber", "minion", "villager", "villager"] },
       players.slice(0, 3),
@@ -246,11 +248,94 @@ describe("Werewolves", () => {
 
     werewolvesGame.handle(state, "p1", event("end_game"), ctx);
 
-    expect(state.phase).toBe("result");
+    expect(state.phase).toBe("vote");
     expect(state.dayEndsAt).toBeUndefined();
+    expect(state.voteEndsAt).toBe(11_000);
+    expect(JSON.stringify(werewolvesGame.view(state, "p1", ctx.players, ctx.options))).not.toContain('"roles"');
+    werewolvesGame.handle(state, "p1", event("vote", { target: "p2" }), ctx);
+    werewolvesGame.handle(state, "p2", event("vote", { target: "p1" }), ctx);
+    werewolvesGame.handle(state, "p3", event("vote", { target: "p1" }), ctx);
+    expect(state.phase).toBe("result");
     const resultView = werewolvesGame.view(state, "p1", ctx.players, ctx.options);
     expect(JSON.stringify(resultView)).toContain('"roles"');
     expect(() => werewolvesGame.handle(state, "p1", event("end_game"), ctx)).toThrow();
+  });
+
+  it("starts a 10-second vote when the day timer expires", () => {
+    let now = 5_000;
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "minion", "villager", "villager"] },
+      players.slice(0, 3),
+      [],
+      () => now,
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "day";
+    state.dayEndsAt = now;
+
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+    expect(state.phase).toBe("vote");
+    expect(state.voteEndsAt).toBe(now + 10_000);
+    now += 10_000;
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+    expect(state.phase).toBe("result");
+    expect(state.dead).toEqual([]);
+    expect(state.winners).toEqual(["werewolf"]);
+  });
+
+  it("resolves tied kills as no deaths and a Werewolves win", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "minion", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "vote";
+    state.voteEndsAt = 2_000;
+    state.roles = { p1: "werewolf", p2: "villager", p3: "seer" };
+    state.votes = { p1: "p2", p2: "p3", p3: "p1" };
+
+    expect(werewolvesGame.onTimer?.(state, { ...ctx, now: () => 2_000 })).toBe(true);
+    expect(state.phase).toBe("result");
+    expect(state.dead).toEqual([]);
+    expect(state.winners).toEqual(["werewolf"]);
+  });
+
+  it("applies Hunter chain kills and awards the Tanner when killed", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "minion", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "vote";
+    state.voteEndsAt = 2_000;
+    state.roles = { p1: "hunter", p2: "tanner", p3: "werewolf" };
+    state.votes = { p1: "p2", p2: "p1", p3: "p1" };
+
+    werewolvesGame.onTimer?.(state, { ...ctx, now: () => 2_000 });
+
+    expect(state.dead).toEqual(expect.arrayContaining(["p1", "p2"]));
+    expect(state.winners).toEqual(["tanner"]);
+  });
+
+  it("lets a Hunter's chain kill eliminate a Werewolf", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "minion", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "vote";
+    state.voteEndsAt = 2_000;
+    state.roles = { p1: "hunter", p2: "villager", p3: "werewolf" };
+    state.votes = { p1: "p3", p2: "p1", p3: "p1" };
+
+    werewolvesGame.onTimer?.(state, { ...ctx, now: () => 2_000 });
+
+    expect(state.dead).toEqual(expect.arrayContaining(["p1", "p3"]));
+    expect(state.winners).toEqual(["village"]);
   });
 
   it("does not include a role card in a player's day view", () => {

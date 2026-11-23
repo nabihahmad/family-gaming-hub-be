@@ -54,7 +54,8 @@ export interface WerewolvesState {
   actions: Record<string, Array<{ target: string; role: WerewolvesRole }>>;
   acted: string[];
   votes: Record<string, string>;
-  winner?: "village" | "werewolf" | "tanner";
+  dead: string[];
+  winners?: Array<"village" | "werewolf" | "tanner">;
 }
 
 export type GameState = CodenamesState | ImposterState | WerewolvesState;

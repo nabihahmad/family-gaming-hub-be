@@ -29,7 +29,7 @@ const nightOrder: WerewolvesRole[] = [
 ];
 const nightStepMs = 10_000;
 const dayDurationMs = 5 * 60_000;
-const voteDurationMs = 90_000;
+const voteDurationMs = 10_000;
 
 function getState(state: unknown): WerewolvesState {
   return state as WerewolvesState;
@@ -130,6 +130,7 @@ function init(ctx: GameContext): WerewolvesState {
     actions: {},
     acted: [],
     votes: {},
+    dead: [],
   };
 }
 
@@ -220,8 +221,17 @@ function finishVote(state: WerewolvesState): void {
   const counts = new Map<string, number>();
   Object.values(state.votes).forEach((target) => counts.set(target, (counts.get(target) ?? 0) + 1));
   const highest = Math.max(0, ...counts.values());
-  // Tied leaders all die; a dead Hunter also kills the player they voted for.
-  const dead = new Set([...counts].filter(([, count]) => count === highest && highest > 0).map(([id]) => id));
+  const leaders = [...counts].filter(([, count]) => count === highest && highest > 0).map(([id]) => id);
+  if (leaders.length > 1) {
+    // A tied vote means nobody is killed; the Werewolf team wins.
+    state.dead = [];
+    state.winners = ["werewolf"];
+    state.phase = "result";
+    delete state.voteEndsAt;
+    return;
+  }
+
+  const dead = new Set(leaders);
   const pending = [...dead];
   while (pending.length) {
     const deadId = pending.pop()!;
@@ -232,12 +242,19 @@ function finishVote(state: WerewolvesState): void {
       pending.push(target);
     }
   }
-  if ([...dead].some((id) => state.roles[id] === "tanner")) state.winner = "tanner";
-  else if ([...dead].some((id) => state.roles[id] === "werewolf")) state.winner = "village";
-  else if (Object.values(state.roles).includes("werewolf")) state.winner = "werewolf";
-  else state.winner = dead.size === 0 ? "village" : "werewolf";
+  state.dead = [...dead];
+  if ([...dead].some((id) => state.roles[id] === "tanner")) state.winners = ["tanner"];
+  else if ([...dead].some((id) => state.roles[id] === "werewolf")) state.winners = ["village"];
+  else if (Object.values(state.roles).includes("werewolf")) state.winners = ["werewolf"];
+  else state.winners = ["village"];
   state.phase = "result";
   delete state.voteEndsAt;
+}
+
+function startVote(state: WerewolvesState, now: number): void {
+  state.phase = "vote";
+  state.voteEndsAt = now + voteDurationMs;
+  delete state.dayEndsAt;
 }
 
 function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameContext): WerewolvesState {
@@ -266,15 +283,12 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
   }
   if (event.name === "end_day") {
     requireRule(state.phase === "day", "INVALID_PHASE", "The discussion phase has ended.");
-    state.phase = "vote";
-    state.voteEndsAt = ctx.now() + voteDurationMs;
-    delete state.dayEndsAt;
+    startVote(state, ctx.now());
     return state;
   }
   if (event.name === "end_game") {
     requireRule(state.phase === "day", "INVALID_PHASE", "The game can only be ended during the day.");
-    state.phase = "result";
-    delete state.dayEndsAt;
+    startVote(state, ctx.now());
     return state;
   }
   if (event.name === "vote") {
@@ -364,7 +378,7 @@ function view(value: unknown, playerId: string, players: GameContext["players"],
     if (state.voteEndsAt) result.endsAt = state.voteEndsAt;
   }
   if (state.phase === "result") {
-    result.result = { roles: state.roles, votes: state.votes, winner: state.winner };
+    result.result = { roles: state.roles, votes: state.votes, dead: state.dead, winners: state.winners ?? [] };
   }
   return { game: "werewolves", view: result };
 }
@@ -372,9 +386,7 @@ function view(value: unknown, playerId: string, players: GameContext["players"],
 function onTimer(value: unknown, ctx: GameContext): boolean {
   const state = getState(value);
   if (state.phase === "day" && (state.dayEndsAt ?? Infinity) <= ctx.now()) {
-    state.phase = "vote";
-    state.voteEndsAt = ctx.now() + voteDurationMs;
-    delete state.dayEndsAt;
+    startVote(state, ctx.now());
     return true;
   }
   if (state.phase === "night") return advanceStageIfReady(state, ctx);
