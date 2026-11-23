@@ -271,6 +271,12 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
     delete state.dayEndsAt;
     return state;
   }
+  if (event.name === "end_game") {
+    requireRule(state.phase === "day", "INVALID_PHASE", "The game can only be ended during the day.");
+    state.phase = "result";
+    delete state.dayEndsAt;
+    return state;
+  }
   if (event.name === "vote") {
     requireRule(state.phase === "vote", "INVALID_PHASE", "Voting is not open.");
     const target = event.data.target;
@@ -340,11 +346,12 @@ function promptFor(
 function view(value: unknown, playerId: string, players: GameContext["players"], options: GameContext["options"]) {
   const state = getState(value);
   if (!state.originalRoles[playerId]) return null;
-  const result = {
+  const result: Record<string, unknown> = {
     phase: state.phase,
     lang: options.lang,
-    myRole: state.phase === "role_reveal" ? state.originalRoles[playerId] : state.roles[playerId],
-  } as Record<string, unknown>;
+  };
+  if (state.phase === "role_reveal") result.myRole = state.originalRoles[playerId];
+  if (state.phase === "night") result.myRole = state.roles[playerId];
   if (state.phase === "role_reveal") result.acked = state.acked.includes(playerId);
   if (state.phase === "night" && state.stages[state.stageIndex] === state.roles[playerId]) {
     result.prompt = promptFor(state, playerId, players);

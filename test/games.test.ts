@@ -25,6 +25,23 @@ function event(name: string, data: Record<string, unknown> = {}) {
   return { name, data };
 }
 
+function startCodenames(ctx: GameContext) {
+  const state = codenamesGame.init(ctx);
+  if (state.game !== "codenames") throw new Error("Unexpected game state.");
+  for (const [playerId, team] of [
+    ["p1", "red"],
+    ["p2", "red"],
+    ["p3", "blue"],
+    ["p4", "blue"],
+  ] as const) {
+    codenamesGame.handle(state, playerId, event("set_team", { team }), ctx);
+  }
+  codenamesGame.handle(state, "p1", event("become_spymaster"), ctx);
+  codenamesGame.handle(state, "p3", event("become_spymaster"), ctx);
+  codenamesGame.handle(state, "p1", event("begin"), ctx);
+  return state;
+}
+
 describe("Codenames", () => {
   it("starts with a valid board and hides the key from operatives", () => {
     const ctx = context(
@@ -32,20 +49,7 @@ describe("Codenames", () => {
       players,
       Array.from({ length: 25 }, (_, index) => ({ word: `word-${index}` })),
     );
-    const state = codenamesGame.init(ctx);
-    if (state.game !== "codenames") throw new Error("Unexpected game state.");
-
-    for (const [playerId, team] of [
-      ["p1", "red"],
-      ["p2", "red"],
-      ["p3", "blue"],
-      ["p4", "blue"],
-    ] as const) {
-      codenamesGame.handle(state, playerId, event("set_team", { team }), ctx);
-    }
-    codenamesGame.handle(state, "p1", event("become_spymaster"), ctx);
-    codenamesGame.handle(state, "p3", event("become_spymaster"), ctx);
-    codenamesGame.handle(state, "p1", event("begin"), ctx);
+    const state = startCodenames(ctx);
 
     const operativeProjection = JSON.stringify(codenamesGame.view(state, "p2", players, ctx.options));
     const spymaster = codenamesGame.view(state, "p1", players, ctx.options);
@@ -62,6 +66,16 @@ describe("Codenames", () => {
     const firstTeam = state.turn;
     const operative = state.teams[firstTeam].find((id) => state.teams.spymasters[firstTeam] !== id)!;
     const ownCard = state.board.findIndex((card) => card.color === firstTeam);
+    expect(() => codenamesGame.handle(state, operative, event("reveal", { index: ownCard }), ctx)).toThrow();
+    codenamesGame.handle(
+      state,
+      state.teams.spymasters[firstTeam]!,
+      event("give_clue", { text: "river", number: 1 }),
+      ctx,
+    );
+    expect(codenamesGame.view(state, "p4", players, ctx.options)).toMatchObject({
+      view: { clue: { team: firstTeam, text: "river", number: 1 }, guessesMade: 0 },
+    });
     codenamesGame.handle(state, operative, event("reveal", { index: ownCard }), ctx);
     expect(state.remaining[firstTeam]).toBe(8);
     expect(() =>
@@ -71,9 +85,52 @@ describe("Codenames", () => {
     const nextTeam = state.turn;
     const nextOperative = state.teams[nextTeam].find((id) => state.teams.spymasters[nextTeam] !== id)!;
     const assassin = state.board.findIndex((card) => card.color === "assassin");
+    codenamesGame.handle(
+      state,
+      state.teams.spymasters[nextTeam]!,
+      event("give_clue", { text: "danger", number: 1 }),
+      ctx,
+    );
     codenamesGame.handle(state, nextOperative, event("reveal", { index: assassin }), ctx);
     expect(state.phase).toBe("finished");
     expect(state.winner).toBe(firstTeam);
+  });
+
+  it("allows one extra guess after a numbered clue and treats zero as unlimited", () => {
+    const ctx = context(
+      { lang: "en", packs: ["everyday"] },
+      players,
+      Array.from({ length: 25 }, (_, index) => ({ word: `word-${index}` })),
+    );
+    const state = startCodenames(ctx);
+    const team = state.turn;
+    const spymaster = state.teams.spymasters[team]!;
+    const operative = state.teams[team].find((id) => id !== spymaster)!;
+    const ownCards = state.board.flatMap((card, index) => (card.color === team ? [index] : []));
+
+    const inactiveSpymaster = state.teams.spymasters[team === "red" ? "blue" : "red"]!;
+    expect(() =>
+      codenamesGame.handle(state, inactiveSpymaster, event("give_clue", { text: "early", number: 1 }), ctx),
+    ).toThrow();
+    codenamesGame.handle(state, spymaster, event("give_clue", { text: "first clue", number: 1 }), ctx);
+    codenamesGame.handle(state, operative, event("reveal", { index: ownCards[0] }), ctx);
+    expect(state.guessesMade).toBe(1);
+    codenamesGame.handle(state, operative, event("reveal", { index: ownCards[1] }), ctx);
+    expect(state.turn).not.toBe(team);
+    expect(state.clue).toBeUndefined();
+    expect(() => codenamesGame.handle(state, operative, event("reveal", { index: ownCards[2] }), ctx)).toThrow();
+
+    const nextTeam = state.turn;
+    const nextSpymaster = state.teams.spymasters[nextTeam]!;
+    const nextOperative = state.teams[nextTeam].find((id) => id !== nextSpymaster)!;
+    const nextOwnCards = state.board.flatMap((card, index) => (card.color === nextTeam ? [index] : []));
+    codenamesGame.handle(state, nextSpymaster, event("give_clue", { text: "unlimited", number: 0 }), ctx);
+    codenamesGame.handle(state, nextOperative, event("reveal", { index: nextOwnCards[0] }), ctx);
+    codenamesGame.handle(state, nextOperative, event("reveal", { index: nextOwnCards[1] }), ctx);
+    expect(state.turn).toBe(nextTeam);
+    expect(state.guessesMade).toBe(2);
+    codenamesGame.handle(state, nextOperative, event("end_turn"), ctx);
+    expect(state.turn).not.toBe(nextTeam);
   });
 });
 
@@ -171,5 +228,42 @@ describe("Werewolves", () => {
         ),
       ),
     ).toThrow();
+  });
+
+  it("allows ending during the day to reveal final roles before the timer expires", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "minion", "villager", "villager"] },
+      players.slice(0, 3),
+      [],
+      () => 1_000,
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+
+    for (const player of ctx.players) werewolvesGame.handle(state, player.id, event("ack_role"), ctx);
+    state.phase = "day";
+    state.dayEndsAt = 999_999;
+
+    werewolvesGame.handle(state, "p1", event("end_game"), ctx);
+
+    expect(state.phase).toBe("result");
+    expect(state.dayEndsAt).toBeUndefined();
+    const resultView = werewolvesGame.view(state, "p1", ctx.players, ctx.options);
+    expect(JSON.stringify(resultView)).toContain('"roles"');
+    expect(() => werewolvesGame.handle(state, "p1", event("end_game"), ctx)).toThrow();
+  });
+
+  it("does not include a role card in a player's day view", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "minion", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "day";
+    state.dayEndsAt = Date.now() + 60_000;
+
+    const dayView = werewolvesGame.view(state, "p1", ctx.players, ctx.options);
+    expect(JSON.stringify(dayView)).not.toContain("myRole");
   });
 });

@@ -227,14 +227,14 @@ All require `Authorization: Bearer ${ADMIN_TOKEN}` (constant-time comparison); r
 - Players: min 4, max 12. Language-agnostic logic; words come from `ctx.cards`.
 - Setup phase: players choose team (`set_team`), each team needs one spymaster (`become_spymaster`, only if none), host sends `begin` when each team has a spymaster and at least one operative.
 - Board: 25 words. Starting team (random) has **9** words, the other **8**, **7** neutral, **1** assassin. The key card is generated at `begin` with the RNG.
-- Turn: operatives of the team on turn may `reveal` `{ index }` (spymasters cannot). Reveal result:
+- Turn: the active team's spymaster submits `give_clue` `{ text, number }`; the clue and number are public to all players. `number: 0` means unlimited guesses. Active-team operatives may then `reveal` `{ index }` up to `number + 1` cards (unlimited for zero), or use `end_turn` earlier. Spymasters cannot reveal. Reveal result:
   - own color → continue (the team may keep guessing; they can `end_turn` at any time)
   - neutral → turn ends
   - opponent color → turn ends and that team's remaining count decreases
   - assassin → the revealing team loses immediately
   - a team wins when all its words are revealed
 - Views: operatives get `color` **only** for revealed cards. Spymasters get `color` for **all** cards. Never include the key card for operatives.
-- Events: `set_team`, `become_spymaster`, `begin`, `reveal`, `end_turn`.
+- Events: `set_team`, `become_spymaster`, `begin`, `give_clue`, `reveal`, `end_turn`.
 - View shape: `CodenamesView` as defined in the frontend file (phase, lang, teams, myTeam, isSpymaster, board, turn, remaining, winner).
 
 ### 7.2 Imposter
@@ -256,7 +256,7 @@ All require `Authorization: Bearer ${ADMIN_TOKEN}` (constant-time comparison); r
   - `vote`: `vote` `{ target }`, secret until all have voted (or timer end).
   - `result`: reveal everyone's final role (after swaps), compute the winners (werewolf team, villager team, tanner), handle ties and the hunter's chain kill. Document the rules in code comments.
 - Views: never reveal original/current roles other than what the player legitimately learned; the view includes the player's *original* role card (as dealt) and any private night results they received.
-- Events: `ack_role`, `night_action`, `vote`, `end_day` (host), `next_game` (host).
+- Events: `ack_role`, `night_action`, `vote`, `end_day` (host), `end_game` (host; ends the day early and reveals roles), `next_game` (host).
 
 ## 8. Security and robustness
 

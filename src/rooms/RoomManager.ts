@@ -190,7 +190,7 @@ export class RoomManager {
           }
           const data = (message.payload.data ?? {}) as Record<string, unknown>;
           const event: GameEvent = { name: String(message.payload.name), data };
-          if (["begin", "reveal_imposter", "next_round", "next_game", "end_day"].includes(event.name)) {
+          if (["begin", "reveal_imposter", "next_round", "next_game", "end_day", "end_game"].includes(event.name)) {
             this.assertHost(room, player);
           }
           const module = gameRegistry[room.game]!;

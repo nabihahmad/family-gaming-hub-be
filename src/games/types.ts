@@ -9,6 +9,8 @@ export interface CodenamesState {
   board: Array<{ word: string; color?: CardColor; revealed: boolean }>;
   turn: "red" | "blue";
   remaining: { red: number; blue: number };
+  clue?: { team: "red" | "blue"; text: string; number: number };
+  guessesMade: number;
   winner?: "red" | "blue";
 }
 

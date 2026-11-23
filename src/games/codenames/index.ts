@@ -19,6 +19,7 @@ function init(ctx: GameContext): CodenamesState {
       .map(({ word }) => ({ word, revealed: false })),
     turn: "red",
     remaining: { red: 9, blue: 8 },
+    guessesMade: 0,
   };
 }
 
@@ -36,12 +37,27 @@ function makeKey(state: CodenamesState, rng: () => number): void {
   );
   state.turn = first;
   state.remaining = first === "red" ? { red: 9, blue: 8 } : { red: 8, blue: 9 };
+  state.guessesMade = 0;
+  delete state.clue;
   state.board.forEach((card, index) => {
     card.color = colors[index]!;
   });
 }
 
 type CardColor = "red" | "blue" | "neutral" | "assassin";
+
+function endTurn(state: CodenamesState): void {
+  state.turn = state.turn === "red" ? "blue" : "red";
+  state.guessesMade = 0;
+  delete state.clue;
+}
+
+function hasControlCharacters(value: string): boolean {
+  return [...value].some((character) => {
+    const code = character.codePointAt(0) ?? 0;
+    return code < 32 || code === 127;
+  });
+}
 
 function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameContext): CodenamesState {
   const state = getState(value);
@@ -87,20 +103,40 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
   requireRule(state.phase === "playing", "INVALID_PHASE", "This action is not available now.");
   const team = teams.find((item) => state.teams[item].includes(playerId));
   const isSpymaster = Boolean(team && state.teams.spymasters[team] === playerId);
+  if (name === "give_clue") {
+    requireRule(team === state.turn && isSpymaster, "NOT_ALLOWED", "Only the active team's spymaster can give a clue.");
+    requireRule(!state.clue, "INVALID_ACTION", "A clue has already been given for this turn.");
+    requireRule(
+      typeof data.text === "string" &&
+        data.text.trim().length > 0 &&
+        data.text.trim().length <= 80 &&
+        !hasControlCharacters(data.text),
+      "INVALID_ACTION",
+      "Enter a clue between 1 and 80 characters without control characters.",
+    );
+    requireRule(
+      Number.isInteger(data.number) && Number(data.number) >= 0 && Number(data.number) <= 25,
+      "INVALID_ACTION",
+      "The clue number must be between 0 and 25.",
+    );
+    state.clue = { team: state.turn, text: data.text.trim(), number: Number(data.number) };
+    state.guessesMade = 0;
+    return state;
+  }
   if (name === "end_turn") {
     requireRule(
-      team === state.turn && !isSpymaster,
+      team === state.turn && !isSpymaster && state.clue?.team === state.turn,
       "NOT_ALLOWED",
-      "Only the active team's operatives can end the turn.",
+      "Only the active team's operatives can end the turn after a clue.",
     );
-    state.turn = state.turn === "red" ? "blue" : "red";
+    endTurn(state);
     return state;
   }
   if (name === "reveal") {
     requireRule(
-      team === state.turn && !isSpymaster,
+      team === state.turn && !isSpymaster && state.clue?.team === state.turn,
       "NOT_ALLOWED",
-      "Only the active team's operatives can reveal a card.",
+      "Only the active team's operatives can reveal a card after a clue.",
     );
     requireRule(
       Number.isInteger(data.index) && Number(data.index) >= 0 && Number(data.index) < 25,
@@ -119,10 +155,13 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
         state.phase = "finished";
         state.winner = card.color;
       } else if (card.color !== state.turn) {
-        state.turn = state.turn === "red" ? "blue" : "red";
+        endTurn(state);
+      } else {
+        state.guessesMade++;
+        if (state.clue.number > 0 && state.guessesMade >= state.clue.number + 1) endTurn(state);
       }
     } else {
-      state.turn = state.turn === "red" ? "blue" : "red";
+      endTurn(state);
     }
     return state;
   }
@@ -148,6 +187,7 @@ function view(value: unknown, playerId: string, _players: GameContext["players"]
       })),
       turn: state.turn,
       remaining: state.remaining,
+      ...(state.clue ? { clue: state.clue, guessesMade: state.guessesMade } : {}),
       ...(state.winner ? { winner: state.winner } : {}),
     },
   };
