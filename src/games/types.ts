@@ -48,6 +48,7 @@ export interface WerewolvesState {
   acked: string[];
   stages: WerewolvesRole[];
   stageIndex: number;
+  stageActors: string[];
   stageEndsAt?: number;
   dayEndsAt?: number;
   voteEndsAt?: number;

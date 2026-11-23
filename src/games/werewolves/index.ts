@@ -84,6 +84,7 @@ function connectedActors(state: WerewolvesState, role: WerewolvesRole, ctx: Game
 
 function startStage(state: WerewolvesState, ctx: GameContext): void {
   const role = state.stages[state.stageIndex];
+  state.stageActors = role ? connectedActors(state, role, ctx) : [];
   if (!role) {
     state.phase = "day";
     state.dayEndsAt = ctx.now() + dayDurationMs;
@@ -92,7 +93,7 @@ function startStage(state: WerewolvesState, ctx: GameContext): void {
   }
   state.stageEndsAt = ctx.now() + nightStepMs;
   if (role === "insomniac") {
-    for (const playerId of connectedActors(state, role, ctx)) {
+    for (const playerId of state.stageActors) {
       state.acted.push(playerId);
       state.actions[playerId] = [{ target: playerId, role: state.roles[playerId]! }];
     }
@@ -102,7 +103,10 @@ function startStage(state: WerewolvesState, ctx: GameContext): void {
 function advanceStageIfReady(state: WerewolvesState, ctx: GameContext): boolean {
   if (state.phase !== "night" || (state.stageEndsAt ?? Infinity) > ctx.now()) return false;
   const role = state.stages[state.stageIndex];
-  const allActed = !role || connectedActors(state, role, ctx).every((id) => state.acted.includes(id));
+  const activeActors = state.stageActors.filter((id) =>
+    ctx.players.some((player) => player.id === id && player.connected),
+  );
+  const allActed = !role || activeActors.every((id) => state.acted.includes(id));
   if (!allActed) return false;
   state.stageIndex++;
   startStage(state, ctx);
@@ -127,6 +131,7 @@ function init(ctx: GameContext): WerewolvesState {
     acked: [],
     stages,
     stageIndex: 0,
+    stageActors: [],
     actions: {},
     acted: [],
     votes: {},
@@ -272,7 +277,7 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
   if (event.name === "night_action") {
     requireRule(state.phase === "night", "INVALID_PHASE", "It is not night.");
     const role = state.stages[state.stageIndex];
-    requireRule(role && state.roles[playerId] === role, "NOT_ALLOWED", "It is not your turn to act.");
+    requireRule(role && state.stageActors.includes(playerId), "NOT_ALLOWED", "It is not your turn to act.");
     requireRule(!state.acted.includes(playerId), "INVALID_ACTION", "Your night action was already submitted.");
     const targets = event.data.targets;
     requireRule(validTargets(targets), "INVALID_ACTION", "Targets must be a list of player or center IDs.");
@@ -367,7 +372,7 @@ function view(value: unknown, playerId: string, players: GameContext["players"],
   if (state.phase === "role_reveal") result.myRole = state.originalRoles[playerId];
   if (state.phase === "night") result.myRole = state.roles[playerId];
   if (state.phase === "role_reveal") result.acked = state.acked.includes(playerId);
-  if (state.phase === "night" && state.stages[state.stageIndex] === state.roles[playerId]) {
+  if (state.phase === "night" && state.stageActors.includes(playerId)) {
     result.prompt = promptFor(state, playerId, players);
   }
   if (state.phase === "day" && state.dayEndsAt) result.endsAt = state.dayEndsAt;

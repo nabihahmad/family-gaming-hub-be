@@ -232,6 +232,35 @@ describe("Werewolves", () => {
     ).toThrow();
   });
 
+  it("allows only the original Robber to act after stealing a role card", () => {
+    let now = 1_000;
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "villager", "villager", "villager"] },
+      players.slice(0, 3),
+      [],
+      () => now,
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "night";
+    state.stages = ["robber", "troublemaker"];
+    state.stageIndex = 0;
+    state.stageActors = ["p1"];
+    state.stageEndsAt = now + 10_000;
+    state.roles = { p1: "robber", p2: "villager", p3: "seer" };
+
+    werewolvesGame.handle(state, "p1", event("night_action", { targets: ["p2"] }), ctx);
+
+    expect(state.roles).toEqual({ p1: "villager", p2: "robber", p3: "seer" });
+    expect(JSON.stringify(werewolvesGame.view(state, "p2", ctx.players, ctx.options))).not.toContain('"prompt"');
+    expect(() => werewolvesGame.handle(state, "p2", event("night_action", { targets: ["p3"] }), ctx)).toThrow();
+
+    now += 10_000;
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+    expect(state.stageIndex).toBe(1);
+    expect(state.stageActors).toEqual([]);
+  });
+
   it("starts the timed vote when the host ends the day early", () => {
     const ctx = context(
       { lang: "en", roles: ["werewolf", "seer", "robber", "minion", "villager", "villager"] },
