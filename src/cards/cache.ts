@@ -32,7 +32,7 @@ export class CardCache {
       .filter((pack) => pack.games.includes(game))
       .map((pack) => ({
         id: pack._id,
-        name: pack.name[lang],
+        name: pack.name[lang] ?? pack.name.en ?? pack.name.ar ?? pack._id,
         count: this.cards.filter((card) => card.pack === pack._id && card.games.includes(game) && Boolean(card[lang]))
           .length,
       }))

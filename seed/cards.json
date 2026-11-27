@@ -29,6 +29,12 @@
       "name": { "en": "Original Codenames" },
       "games": ["codenames"],
       "active": true
+    },
+    {
+      "_id": "original-fhemt3lek",
+      "name": { "ar": "Original Fhemt 3lek" },
+      "games": ["codenames"],
+      "active": true
     }
   ],
   "cards": [
@@ -695,6 +701,2364 @@
     { "pack": "original-codenames", "en": { "word": "wind" } },
     { "pack": "original-codenames", "en": { "word": "witch" } },
     { "pack": "original-codenames", "en": { "word": "worm" } },
-    { "pack": "original-codenames", "en": { "word": "yard" } }
+    { "pack": "original-codenames", "en": { "word": "yard" } },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "WAR2A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BAYDA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TEMM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "HARAM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ARGUILE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ANDIL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MILLIONAIRE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MALAK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FALLINE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NAJEM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TANNOURA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TAKHET"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KNEFE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MA3MOUL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BARGHOUT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MARAD"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LE3EB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7AMA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ARICH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7AYET"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "PARACHUTE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SE3A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DARAJ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SFI7A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BEER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ADOU"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DABKE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SAWDA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ASKARE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TABEL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MATAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MEFTE7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TABBOULE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MESTACHFA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZALGHOUTA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MOT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "GHOSN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "HAM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BOUWEBE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZABIT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DEBB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "OSBA3"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "HOTEL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "HAWA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SALLE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHARE2"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JOURA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NASSIB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "GHALE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "GEBRAN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FARA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ASSAD"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7AKIM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RAFF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAHRAJEN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TROMBA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MABROUK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ARA2"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TASSEH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LASER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RAKWE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DEKKENE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHAWKE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SE7A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BARME"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SAHRA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RASS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JALSE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7AL2A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TEFFE7A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KEBBEYE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "REMMENE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BOUCHAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "AMAR 2ISTINA3E"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NACHER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MEZZA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SAMM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAWJE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KARAM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FOUL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JOZ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FORSA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "A3DE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHAT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MICROSCOPE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NETWORK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SENN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FESSID"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BOX"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NAHER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAY"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "VAN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ADA7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ALEME"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SA3IDE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ABBE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BAALBAK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FARAYA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TURBINE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KERSE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "AMAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BANK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TAYYIB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BEKHRA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ARBE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NABE3"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SAROUKH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TKHORTOUCH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DAREB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "WOZZE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAL3AB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ET"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAKTOUB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ADE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ROU7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NAT7IT SA7AB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TE3LI2"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BELOU3"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ELO"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "OMMEH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SAMAK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RADIO"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KHARZE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BERMUDA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SETTE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SOBBAT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TAYFE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SANFOUR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ALEM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "HAMRA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ROSE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3OUD"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KERBEJ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ARED"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TALEJ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CRAVATE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SA7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BLOCK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KABSE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SAFAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KLEB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BEIT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7SSAN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SED"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAKHLOU2 FADA2E"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAKANA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BAT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SATURN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZONNAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DEKHAN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BELBOUL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHABAK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MOTEUR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MHARRABJE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHILL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "2ENBLE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "AMIRA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KAFAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AROUS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NAY"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FAYROUZ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7OUT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AJ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MOUCHA3WIZE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LO7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DEHAB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ROBOT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FEYDE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7AKAM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SOFA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KANGOUROU"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ASBE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ADIS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ASSEH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHMEL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MARS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LSEN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "2ID"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "GHABE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ARNAB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FARACHE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BE2LEWA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DAW"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KOU3"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NHAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KHET"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "GHATTAS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MARSOUM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "PASS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3EIN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHABA7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AMIL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DRAGON"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "AKHTABOUT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KHALIS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NIDAL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KERECH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SAWENE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SALEM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AFRIT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SANAD"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TYR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ABIBI"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "OURJOUWEN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KHAZE2"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SAHEL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BEREJ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ASSAL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZAREF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3A2ED"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RICHE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JALID"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MERID"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TERIKH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TAWLE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AJ2A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TIYARA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BOUM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LINK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NOUR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZAMMOUR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MA3ROUF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TEJ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SERVICE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHEF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CODE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KHOULOUD"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7A2"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NO2TA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MACHROU3"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "YALLA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DAHER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ALEF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "OUWWE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KABBOUT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BALADIYE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ANTARCTICA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AMAL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AMOUD"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ARAME"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHERI3"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHOCOLATA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TARBOUCH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SA7SOU7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAN2OUCHE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JAZAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MRABBA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ABOU"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ACHICH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DIK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TOOT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SATE7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LABAN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NAZRA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ID"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "OPERA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MACHKAL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TOSHET"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7AJIB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RAFI2"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JARAS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JEM3A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BALON"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "NURSE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KAFF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ANENE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "PIRATE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHERI"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ESTEZ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ABJADIYYE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BA7ER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7MAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MEZMAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHEKOUCH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KHATT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BARAD"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FALTEH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FYOULE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7SEB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RABI3"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TOBYID"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "2ALAM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7ANAK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "WA2ET"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ICHARA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MAWSAM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FARED"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "M7AMMAS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RA2ES"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RASSME"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZAHER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "GHATA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "WEJJ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "7AZZ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MOSHET"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "M3ALLIM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CARTE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LOTO"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LIMOUSINE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "AUSTRALIA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BOSTA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "PENGUIN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ANOUN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHOUF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MASSRA7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RA7A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHOUHADA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ECHTIRAK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RECHECH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DARAK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHHEDE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KA3KE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "AMBULANCE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHE3ER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "QUORIDOR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "PHOENICIA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MECANIC"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ARABIYE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SOUS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "WA23A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "2OTON"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SFOUF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ALMAZA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DAY3A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHABB"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ANKABOUT"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BOUZA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "EJER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "AKH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SOUR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "WIZARA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ATEL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SALBE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZET"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZIAD"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "FERIS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KEBBE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3AJALE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "2EBRE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TRABLOUS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JA7ECH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TONE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DOUWWAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MOU7AME"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SABA7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TELESCOPE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHECHE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JESSER"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CHECK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MOGHAYTA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZAHLE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RAWCHE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KHATIM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RSAS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MELE7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LEIL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ACHTA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KAZAM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BAKARA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BATON"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TAOUK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "AM7A"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MA3JOUNE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SIYESSE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SANDOU2"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "RAYYIS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MALFOUF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ARZ"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SOU2"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "3ALAM"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MALEK"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "TAYYAR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CARTOON"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "BATAL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "HUMMUS"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MARWA7IYE"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DINOSOR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SEIF"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MURR"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "CASINO"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "JBEL"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "DOUDEH"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "MASTRA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "SEKKIN"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "ZI7"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "LIRA"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KHEDME"
+      }
+    },
+    {
+      "pack": "original-fhemt3lek",
+      "ar": {
+        "word": "KAJO"
+      }
+    }
   ]
 }

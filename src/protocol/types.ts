@@ -43,7 +43,7 @@ export interface CardDocument {
 
 export interface PackDocument {
   _id: string;
-  name: Record<Lang, string>;
+  name: Partial<Record<Lang, string>>;
   games: GameId[];
   active: boolean;
 }

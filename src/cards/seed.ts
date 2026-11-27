@@ -2,8 +2,9 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { config } from "../config.js";
 import { connectCardRepository } from "./repo.js";
+import { getSeedCardGames } from "./seed-utils.js";
 import { normalizeWord } from "./normalize.js";
-import type { CardDocument, CardWord, GameId, PackDocument } from "../protocol/types.js";
+import type { CardDocument, CardWord, PackDocument } from "../protocol/types.js";
 
 interface SeedCard {
   pack: string;
@@ -19,6 +20,9 @@ async function seed(): Promise<void> {
   const repository = await connectCardRepository(config.mongoUri, config.mongoDb);
   try {
     const data = JSON.parse(await readFile(resolve(process.cwd(), "seed/cards.json"), "utf8")) as SeedData;
+    const packGames = new Map(data.packs.map((pack) => [pack._id, pack.games]));
+    for (const item of data.cards) getSeedCardGames(item.pack, packGames);
+
     for (const pack of data.packs) {
       await repository.packs.updateOne({ _id: pack._id }, { $set: pack }, { upsert: true });
     }
@@ -26,7 +30,7 @@ async function seed(): Promise<void> {
     for (const item of data.cards) {
       const card: CardDocument = {
         pack: item.pack,
-        games: ["codenames", "imposter"] satisfies GameId[],
+        games: getSeedCardGames(item.pack, packGames),
         active: true,
         updatedAt: new Date(),
       };
