@@ -8,8 +8,11 @@ export interface CodenamesState {
   teams: { red: string[]; blue: string[]; spymasters: Partial<Record<"red" | "blue", string>> };
   board: Array<{ word: string; color?: CardColor; revealed: boolean }>;
   turn: "red" | "blue";
+  spymasterTurns: { red: number; blue: number };
+  turnEndsAt?: number;
   remaining: { red: number; blue: number };
   clue?: { team: "red" | "blue"; text: string; number: number };
+  clueLog: Array<{ team: "red" | "blue"; text: string; number: number }>;
   guessesMade: number;
   winner?: "red" | "blue";
 }
@@ -70,9 +73,16 @@ export interface GameEvent {
   name: string;
   data: Record<string, unknown>;
 }
+export interface CodenamesTimerConfig {
+  spymasterInitialMs: number;
+  spymasterRoundDecrementMs: number;
+  spymasterMinimumMs: number;
+  guesserMsPerWord: number;
+}
 export interface GameContext {
   players: Player[];
   options: GameOptions;
+  codenamesTimers?: CodenamesTimerConfig;
   cards: CardWord[];
   rng: () => number;
   now: () => number;

@@ -6,7 +6,7 @@ import { selectCards } from "../cards/selection.js";
 import { GameRuleError } from "../games/common.js";
 import { gameRegistry } from "../games/registry.js";
 import { validateWerewolvesOptions } from "../games/werewolves/index.js";
-import type { GameContext, GameEvent } from "../games/types.js";
+import type { CodenamesTimerConfig, GameContext, GameEvent } from "../games/types.js";
 import type { GameId, GameOptions, Lang } from "../protocol/types.js";
 import { HttpError } from "../util/errors.js";
 import { Room, type RoomPlayer } from "./Room.js";
@@ -31,6 +31,7 @@ export class RoomManager {
     private readonly cards: CardCache,
     private readonly now: () => number = Date.now,
     private readonly rng: () => number = Math.random,
+    private readonly codenamesTimers?: CodenamesTimerConfig,
   ) {}
 
   createRoom(ownerId: string): Room {
@@ -344,6 +345,7 @@ export class RoomManager {
       players: room.players.map(({ id, name, connected }) => ({ id, name, connected })),
       options,
       cards,
+      ...(this.codenamesTimers ? { codenamesTimers: this.codenamesTimers } : {}),
       rng: this.rng,
       now: this.now,
     };

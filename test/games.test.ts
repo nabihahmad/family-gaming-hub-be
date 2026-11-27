@@ -73,8 +73,12 @@ describe("Codenames", () => {
       event("give_clue", { text: "river", number: 1 }),
       ctx,
     );
-    expect(codenamesGame.view(state, "p4", players, ctx.options)).toMatchObject({
-      view: { clue: { team: firstTeam, text: "river", number: 1 }, guessesMade: 0 },
+    expect(codenamesGame.view(state, "p2", players, ctx.options)).toMatchObject({
+      view: {
+        clue: { team: firstTeam, text: "river", number: 1 },
+        clueLog: [{ team: firstTeam, text: "river", number: 1 }],
+        guessesMade: 0,
+      },
     });
     codenamesGame.handle(state, operative, event("reveal", { index: ownCard }), ctx);
     expect(state.remaining[firstTeam]).toBe(8);
@@ -94,6 +98,76 @@ describe("Codenames", () => {
     codenamesGame.handle(state, nextOperative, event("reveal", { index: assassin }), ctx);
     expect(state.phase).toBe("finished");
     expect(state.winner).toBe(firstTeam);
+    expect(codenamesGame.view(state, "p2", players, ctx.options)).toMatchObject({
+      view: {
+        clueLog: [
+          { team: firstTeam, text: "river", number: 1 },
+          { team: nextTeam, text: "danger", number: 1 },
+        ],
+      },
+    });
+  });
+
+  it("uses configured spymaster and guesser timers and forfeits expired turns", () => {
+    let now = 1_000;
+    const ctx = context(
+      { lang: "en", packs: ["everyday"] },
+      players,
+      Array.from({ length: 25 }, (_, index) => ({ word: `word-${index}` })),
+      () => now,
+    );
+    ctx.codenamesTimers = {
+      spymasterInitialMs: 120_000,
+      spymasterRoundDecrementMs: 15_000,
+      spymasterMinimumMs: 15_000,
+      guesserMsPerWord: 30_000,
+    };
+    const state = startCodenames(ctx);
+    const firstTeam = state.turn;
+    expect(state.turnEndsAt).toBe(now + 120_000);
+
+    now += 119_999;
+    expect(codenamesGame.onTimer?.(state, ctx)).toBe(false);
+    now += 1;
+    expect(codenamesGame.onTimer?.(state, ctx)).toBe(true);
+    expect(state.turn).not.toBe(firstTeam);
+    expect(state.turnEndsAt).toBe(now + 120_000);
+
+    const guessTeam = state.turn;
+    codenamesGame.handle(
+      state,
+      state.teams.spymasters[guessTeam]!,
+      event("give_clue", { text: "three", number: 3 }),
+      ctx,
+    );
+    expect(state.turnEndsAt).toBe(now + 90_000);
+    now += 90_000;
+    expect(codenamesGame.onTimer?.(state, ctx)).toBe(true);
+    expect(state.turn).not.toBe(guessTeam);
+    expect(state.turnEndsAt).toBe(now + 105_000);
+  });
+
+  it("bases unlimited-clue time on the active team's remaining words", () => {
+    const ctx = context(
+      { lang: "en", packs: ["everyday"] },
+      players,
+      Array.from({ length: 25 }, (_, index) => ({ word: `word-${index}` })),
+    );
+    ctx.codenamesTimers = {
+      spymasterInitialMs: 120_000,
+      spymasterRoundDecrementMs: 15_000,
+      spymasterMinimumMs: 15_000,
+      guesserMsPerWord: 30_000,
+    };
+    const state = startCodenames(ctx);
+    const activeTeam = state.turn;
+    codenamesGame.handle(
+      state,
+      state.teams.spymasters[activeTeam]!,
+      event("give_clue", { text: "unlimited", number: 0 }),
+      ctx,
+    );
+    expect(state.turnEndsAt).toBe(ctx.now() + state.remaining[activeTeam] * 30_000);
   });
 
   it("allows one extra guess after a numbered clue and treats zero as unlimited", () => {
@@ -177,14 +251,10 @@ describe("Werewolves", () => {
     const state = werewolvesGame.init(ctx);
     if (state.game !== "werewolves") throw new Error("Unexpected game state.");
     state.phase = "day";
-    state.privateResults.p1 = [
-      { kind: "seer", cards: [{ target: "center-0", role: "werewolf" }] },
-    ];
+    state.privateResults.p1 = [{ kind: "seer", cards: [{ target: "center-0", role: "werewolf" }] }];
 
     for (const player of ctx.players) {
-      expect(werewolvesGame.view(state, player.id, ctx.players, ctx.options)).not.toHaveProperty(
-        "view.privateResults",
-      );
+      expect(werewolvesGame.view(state, player.id, ctx.players, ctx.options)).not.toHaveProperty("view.privateResults");
     }
     expect(
       werewolvesGame.view(state, "p1", ctx.players, {
@@ -401,9 +471,7 @@ describe("Werewolves", () => {
 
     werewolvesGame.handle(state, "p2", event("night_action", { targets: ["p1", "p3"] }), ctx);
     expect(state.roles).toEqual({ p1: "villager", p2: "robber", p3: "troublemaker" });
-    expect(() =>
-      werewolvesGame.handle(state, "p1", event("night_action", { targets: ["p2", "p3"] }), ctx),
-    ).toThrow();
+    expect(() => werewolvesGame.handle(state, "p1", event("night_action", { targets: ["p2", "p3"] }), ctx)).toThrow();
   });
 
   it("retains the Seer's selected center-card results privately", () => {

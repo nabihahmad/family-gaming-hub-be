@@ -36,6 +36,10 @@ Primary goals: fast to set up, low latency, simple to run on free tiers, easy to
 | `ADMIN_USERNAME` | Username upserted into MongoDB by `npm run seed:admin` |
 | `ADMIN_PASSWORD` | Password hashed and upserted by `npm run seed:admin` (minimum 12 characters) |
 | `CARD_CACHE_TTL_SECONDS` | Card cache refresh interval (default 300) |
+| `CODENAMES_SPYMASTER_INITIAL_SECONDS` | First spymaster clue timer (default 120) |
+| `CODENAMES_SPYMASTER_ROUND_DECREMENT_SECONDS` | Reduction applied to a team's spymaster timer on each later turn (default 15) |
+| `CODENAMES_SPYMASTER_MINIMUM_SECONDS` | Minimum spymaster clue timer (default 15) |
+| `CODENAMES_GUESSER_SECONDS_PER_WORD` | Guess time for each clue word (default 30) |
 
 ## 3. Architecture
 
@@ -238,9 +242,11 @@ All require `Authorization: Bearer ${ADMIN_TOKEN}` (constant-time comparison); r
   - opponent color → turn ends and that team's remaining count decreases
   - assassin → the revealing team loses immediately
   - a team wins when all its words are revealed
+- Timers: each team's spymaster starts with 120 seconds, then loses 15 seconds on each later turn for that team, to a 15-second minimum. Guessers get 30 seconds per clue word; a zero/unlimited clue uses that team's remaining words. Expiration forfeits the turn. All durations are configurable with the `CODENAMES_*_SECONDS` environment variables above.
+- Hint history: every clue and its number is appended to a public chronological log for all players.
 - Views: operatives get `color` **only** for revealed cards. Spymasters get `color` for **all** cards. Never include the key card for operatives.
 - Events: `set_team`, `become_spymaster`, `begin`, `give_clue`, `reveal`, `end_turn`.
-- View shape: `CodenamesView` as defined in the frontend file (phase, lang, teams, myTeam, isSpymaster, board, turn, remaining, winner).
+- View shape: `CodenamesView` as defined in the frontend file (phase, lang, teams, myTeam, isSpymaster, board, turn, remaining, `endsAt`, `clueLog`, winner).
 
 ### 7.2 Imposter
 - Players: min 3, max 12. Options: `imposters` (default 1).

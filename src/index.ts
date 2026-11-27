@@ -14,7 +14,7 @@ async function start(): Promise<void> {
   const cache = new CardCache(repository);
   await cache.refresh();
 
-  const rooms = new RoomManager(cache);
+  const rooms = new RoomManager(cache, Date.now, Math.random, config.codenamesTimers);
   const auth = new AuthService((username) => repository.adminUsers.findOne({ username }));
   const authRouter = createAuthRouter(auth);
   const admin = createAdminRouter(repository, cache, config.adminToken);

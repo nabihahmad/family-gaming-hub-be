@@ -1,11 +1,36 @@
 import { requireRule, shuffle } from "../common.js";
-import type { CodenamesState, GameContext, GameEvent, GameModule } from "../types.js";
+import type { CodenamesState, CodenamesTimerConfig, GameContext, GameEvent, GameModule } from "../types.js";
 
 const teams = ["red", "blue"] as const;
 type Team = (typeof teams)[number];
+const defaultTimers: CodenamesTimerConfig = {
+  spymasterInitialMs: 120_000,
+  spymasterRoundDecrementMs: 15_000,
+  spymasterMinimumMs: 15_000,
+  guesserMsPerWord: 30_000,
+};
 
 function getState(state: unknown): CodenamesState {
   return state as CodenamesState;
+}
+
+function getTimers(ctx: GameContext): CodenamesTimerConfig {
+  return ctx.codenamesTimers ?? defaultTimers;
+}
+
+function startSpymasterTimer(state: CodenamesState, ctx: GameContext): void {
+  const timers = getTimers(ctx);
+  const duration = Math.max(
+    timers.spymasterMinimumMs,
+    timers.spymasterInitialMs - state.spymasterTurns[state.turn] * timers.spymasterRoundDecrementMs,
+  );
+  state.turnEndsAt = ctx.now() + duration;
+}
+
+function startGuesserTimer(state: CodenamesState, clueNumber: number, ctx: GameContext): void {
+  const timers = getTimers(ctx);
+  const words = clueNumber === 0 ? state.remaining[state.turn] : clueNumber;
+  state.turnEndsAt = ctx.now() + words * timers.guesserMsPerWord;
 }
 
 function init(ctx: GameContext): CodenamesState {
@@ -18,12 +43,14 @@ function init(ctx: GameContext): CodenamesState {
       .slice(0, 25)
       .map(({ word }) => ({ word, revealed: false })),
     turn: "red",
+    spymasterTurns: { red: 0, blue: 0 },
     remaining: { red: 9, blue: 8 },
+    clueLog: [],
     guessesMade: 0,
   };
 }
 
-function makeKey(state: CodenamesState, rng: () => number): void {
+function makeKey(state: CodenamesState, rng: () => number, ctx: GameContext): void {
   const first: Team = rng() < 0.5 ? "red" : "blue";
   const second: Team = first === "red" ? "blue" : "red";
   const colors = shuffle<CardColor>(
@@ -36,9 +63,12 @@ function makeKey(state: CodenamesState, rng: () => number): void {
     rng,
   );
   state.turn = first;
+  state.spymasterTurns = { red: 0, blue: 0 };
   state.remaining = first === "red" ? { red: 9, blue: 8 } : { red: 8, blue: 9 };
   state.guessesMade = 0;
+  state.clueLog = [];
   delete state.clue;
+  startSpymasterTimer(state, ctx);
   state.board.forEach((card, index) => {
     card.color = colors[index]!;
   });
@@ -46,10 +76,18 @@ function makeKey(state: CodenamesState, rng: () => number): void {
 
 type CardColor = "red" | "blue" | "neutral" | "assassin";
 
-function endTurn(state: CodenamesState): void {
+function endTurn(state: CodenamesState, ctx: GameContext): void {
+  state.spymasterTurns[state.turn]++;
   state.turn = state.turn === "red" ? "blue" : "red";
   state.guessesMade = 0;
   delete state.clue;
+  startSpymasterTimer(state, ctx);
+}
+
+function forfeitExpiredTurn(state: CodenamesState, ctx: GameContext): boolean {
+  if (state.turnEndsAt === undefined || state.turnEndsAt > ctx.now()) return false;
+  endTurn(state, ctx);
+  return true;
 }
 
 function hasControlCharacters(value: string): boolean {
@@ -97,10 +135,11 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
       );
     }
     state.phase = "playing";
-    makeKey(state, ctx.rng);
+    makeKey(state, ctx.rng, ctx);
     return state;
   }
   requireRule(state.phase === "playing", "INVALID_PHASE", "This action is not available now.");
+  if (forfeitExpiredTurn(state, ctx)) return state;
   const team = teams.find((item) => state.teams[item].includes(playerId));
   const isSpymaster = Boolean(team && state.teams.spymasters[team] === playerId);
   if (name === "give_clue") {
@@ -120,7 +159,9 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
       "The clue number must be between 0 and 25.",
     );
     state.clue = { team: state.turn, text: data.text.trim(), number: Number(data.number) };
+    state.clueLog.push(state.clue);
     state.guessesMade = 0;
+    startGuesserTimer(state, state.clue.number, ctx);
     return state;
   }
   if (name === "end_turn") {
@@ -129,7 +170,7 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
       "NOT_ALLOWED",
       "Only the active team's operatives can end the turn after a clue.",
     );
-    endTurn(state);
+    endTurn(state, ctx);
     return state;
   }
   if (name === "reveal") {
@@ -149,19 +190,21 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
     if (card.color === "assassin") {
       state.phase = "finished";
       state.winner = state.turn === "red" ? "blue" : "red";
+      delete state.turnEndsAt;
     } else if (card.color === "red" || card.color === "blue") {
       state.remaining[card.color]--;
       if (state.remaining[card.color] === 0) {
         state.phase = "finished";
         state.winner = card.color;
+        delete state.turnEndsAt;
       } else if (card.color !== state.turn) {
-        endTurn(state);
+        endTurn(state, ctx);
       } else {
         state.guessesMade++;
-        if (state.clue.number > 0 && state.guessesMade >= state.clue.number + 1) endTurn(state);
+        if (state.clue.number > 0 && state.guessesMade >= state.clue.number + 1) endTurn(state, ctx);
       }
     } else {
-      endTurn(state);
+      endTurn(state, ctx);
     }
     return state;
   }
@@ -186,11 +229,19 @@ function view(value: unknown, playerId: string, _players: GameContext["players"]
         ...((card.revealed || isSpymaster) && card.color ? { color: card.color } : {}),
       })),
       turn: state.turn,
+      clueLog: state.clueLog,
       remaining: state.remaining,
       ...(state.clue ? { clue: state.clue, guessesMade: state.guessesMade } : {}),
+      ...(state.phase === "playing" && state.turnEndsAt !== undefined ? { endsAt: state.turnEndsAt } : {}),
       ...(state.winner ? { winner: state.winner } : {}),
     },
   };
+}
+
+function onTimer(value: unknown, ctx: GameContext): boolean {
+  const state = getState(value);
+  if (state.phase !== "playing") return false;
+  return forfeitExpiredTurn(state, ctx);
 }
 
 export const codenamesGame: GameModule = {
@@ -201,4 +252,5 @@ export const codenamesGame: GameModule = {
   init,
   handle,
   view,
+  onTimer,
 };

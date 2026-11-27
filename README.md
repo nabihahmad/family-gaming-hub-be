@@ -13,6 +13,8 @@ Express and WebSocket API for the Family Gaming Hub frontend. It serves the exis
 
 The server requires MongoDB to start. MongoDB stores admin credentials and the game card/pack catalog; room, game, and access-session state are intentionally in memory and will be lost when the process restarts. The admin access code and all guest sessions become invalid on restart. Rooms are single-instance and do not use Redis.
 
+Codenames timers are configurable with `CODENAMES_SPYMASTER_INITIAL_SECONDS`, `CODENAMES_SPYMASTER_ROUND_DECREMENT_SECONDS`, `CODENAMES_SPYMASTER_MINIMUM_SECONDS`, and `CODENAMES_GUESSER_SECONDS_PER_WORD`. Defaults are 120, 15, 15, and 30 seconds respectively; see `.env.example`.
+
 ## API
 
 - `GET /health` → `{ "ok": true }`
