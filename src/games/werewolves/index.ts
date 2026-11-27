@@ -410,6 +410,9 @@ function view(value: unknown, playerId: string, players: GameContext["players"],
   ) {
     result.privateResults = state.privateResults[playerId] ?? [];
   }
+  if (state.phase === "day" || state.phase === "vote") {
+    result.availableRoles = [...Object.values(state.originalRoles), ...state.center];
+  }
   if (state.phase === "day" && state.dayEndsAt) result.endsAt = state.dayEndsAt;
   if (state.phase === "vote") {
     result.myVote = state.votes[playerId];
