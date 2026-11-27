@@ -293,6 +293,10 @@ export class RoomManager {
         throw error;
       }
       options.roles = raw.roles as string[];
+      if (raw.nightDiscoveries !== undefined && typeof raw.nightDiscoveries !== "boolean") {
+        throw new HttpError(400, "INVALID_ACTION", "Choose whether to show night discoveries.");
+      }
+      options.nightDiscoveries = raw.nightDiscoveries !== false;
       return options;
     }
 

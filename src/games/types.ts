@@ -39,6 +39,11 @@ export type WerewolvesRole =
   | "hunter"
   | "tanner";
 
+export interface WerewolvesPrivateResult {
+  kind: WerewolvesRole;
+  cards: Array<{ target: string; role: WerewolvesRole }>;
+}
+
 export interface WerewolvesState {
   game: "werewolves";
   phase: "role_reveal" | "night" | "day" | "vote" | "result";
@@ -49,10 +54,11 @@ export interface WerewolvesState {
   stages: WerewolvesRole[];
   stageIndex: number;
   stageActors: string[];
+  stageResults: Record<string, Array<{ target: string; role: WerewolvesRole }>>;
+  privateResults: Record<string, WerewolvesPrivateResult[]>;
   stageEndsAt?: number;
   dayEndsAt?: number;
   voteEndsAt?: number;
-  actions: Record<string, Array<{ target: string; role: WerewolvesRole }>>;
   acted: string[];
   votes: Record<string, string>;
   dead: string[];

@@ -79,12 +79,26 @@ function resizeRoleDeck(roles: string[] | undefined, playerCount: number): Werew
 }
 
 function connectedActors(state: WerewolvesState, role: WerewolvesRole, ctx: GameContext): string[] {
-  return ctx.players.filter((player) => player.connected && state.roles[player.id] === role).map((player) => player.id);
+  return ctx.players
+    .filter(
+      (player) =>
+        player.connected &&
+        state.originalRoles[player.id] === role &&
+        !state.acted.includes(player.id),
+    )
+    .map((player) => player.id);
 }
 
 function startStage(state: WerewolvesState, ctx: GameContext): void {
   const role = state.stages[state.stageIndex];
-  state.stageActors = role ? connectedActors(state, role, ctx) : [];
+  state.stageActors = role
+    ? role === "insomniac"
+      ? ctx.players
+          .filter((player) => player.connected && state.originalRoles[player.id] === "insomniac")
+          .map((player) => player.id)
+      : connectedActors(state, role, ctx)
+    : [];
+  state.stageResults = {};
   if (!role) {
     state.phase = "day";
     state.dayEndsAt = ctx.now() + dayDurationMs;
@@ -94,8 +108,11 @@ function startStage(state: WerewolvesState, ctx: GameContext): void {
   state.stageEndsAt = ctx.now() + nightStepMs;
   if (role === "insomniac") {
     for (const playerId of state.stageActors) {
-      state.acted.push(playerId);
-      state.actions[playerId] = [{ target: playerId, role: state.roles[playerId]! }];
+      if (!state.acted.includes(playerId)) state.acted.push(playerId);
+      const cards = [{ target: playerId, role: state.roles[playerId]! }];
+      state.stageResults[playerId] = cards;
+      const previousResults = state.privateResults[playerId] ?? [];
+      state.privateResults[playerId] = [...previousResults, { kind: role, cards }];
     }
   }
 }
@@ -132,7 +149,8 @@ function init(ctx: GameContext): WerewolvesState {
     stages,
     stageIndex: 0,
     stageActors: [],
-    actions: {},
+    stageResults: {},
+    privateResults: {},
     acted: [],
     votes: {},
     dead: [],
@@ -150,10 +168,10 @@ function validTargets(targets: unknown): targets is string[] {
 function applyNightAction(
   state: WerewolvesState,
   playerId: string,
+  role: WerewolvesRole,
   targets: string[],
   ctx: GameContext,
 ): Array<{ target: string; role: WerewolvesRole }> {
-  const role = state.roles[playerId]!;
   const playerIds = new Set(ctx.players.map((player) => player.id));
   const others = new Set(ctx.players.filter((player) => player.id !== playerId).map((player) => player.id));
   const centerIds = new Set(state.center.map((_, index) => `center-${index}`));
@@ -201,7 +219,7 @@ function applyNightAction(
     requireRule(targets.length === 1 && others.has(targets[0]!), "INVALID_ACTION", "Choose another player.");
     const target = targets[0]!;
     [state.roles[playerId], state.roles[target]] = [state.roles[target]!, state.roles[playerId]!];
-    return [];
+    return [{ target: playerId, role: state.roles[playerId]! }];
   }
   if (role === "troublemaker") {
     requireRule(
@@ -281,7 +299,12 @@ function handle(value: unknown, playerId: string, event: GameEvent, ctx: GameCon
     requireRule(!state.acted.includes(playerId), "INVALID_ACTION", "Your night action was already submitted.");
     const targets = event.data.targets;
     requireRule(validTargets(targets), "INVALID_ACTION", "Targets must be a list of player or center IDs.");
-    state.actions[playerId] = applyNightAction(state, playerId, targets, ctx);
+    const result = applyNightAction(state, playerId, role, targets, ctx);
+    state.stageResults[playerId] = result;
+    if (result.length) {
+      const existing = state.privateResults[playerId] ?? [];
+      state.privateResults[playerId] = [...existing, { kind: role, cards: result }];
+    }
     state.acted.push(playerId);
     advanceStageIfReady(state, ctx);
     return state;
@@ -324,8 +347,8 @@ function promptFor(
   state: WerewolvesState,
   playerId: string,
   players: GameContext["players"],
+  role: WerewolvesRole,
 ): Record<string, unknown> | undefined {
-  const role = state.roles[playerId]!;
   const others = players.filter((player) => player.id !== playerId).map((player) => player.id);
   let prompt: Record<string, unknown>;
   if (role === "doppelganger") prompt = { kind: role, options: { players: others, min: 1, max: 1 } };
@@ -335,7 +358,7 @@ function promptFor(
       .map(([id]) => id);
     prompt = wolves.length
       ? { kind: role, options: {}, info: wolves }
-      : { kind: role, options: { center: 1, min: 1, max: 1 } };
+      : { kind: role, options: { center: 3, min: 1, max: 1 } };
   } else if (role === "minion") {
     prompt = {
       kind: role,
@@ -353,12 +376,17 @@ function promptFor(
         .map(([id]) => id),
     };
   } else if (role === "seer") prompt = { kind: role, options: { players: others, center: 3, min: 1, max: 2 } };
-  else if (role === "robber") prompt = { kind: role, options: { players: others, min: 1, max: 1 } };
-  else if (role === "troublemaker") prompt = { kind: role, options: { players: others, min: 2, max: 2 } };
+  else if (role === "robber") {
+    const result = state.stageResults[playerId];
+    prompt = {
+      kind: role,
+      options: { players: result?.length ? [...others, playerId] : others, min: 1, max: 1 },
+    };
+  } else if (role === "troublemaker") prompt = { kind: role, options: { players: others, min: 2, max: 2 } };
   else if (role === "drunk") prompt = { kind: role, options: { center: 3, min: 1, max: 1 } };
   else if (role === "insomniac") prompt = { kind: role, options: { players: [playerId], min: 0, max: 0 } };
   else return undefined;
-  if (state.actions[playerId]) prompt.result = state.actions[playerId];
+  if (state.stageResults[playerId]) prompt.result = state.stageResults[playerId];
   return prompt;
 }
 
@@ -370,10 +398,17 @@ function view(value: unknown, playerId: string, players: GameContext["players"],
     lang: options.lang,
   };
   if (state.phase === "role_reveal") result.myRole = state.originalRoles[playerId];
-  if (state.phase === "night") result.myRole = state.roles[playerId];
+  if (state.phase === "night") result.myRole = state.originalRoles[playerId];
   if (state.phase === "role_reveal") result.acked = state.acked.includes(playerId);
   if (state.phase === "night" && state.stageActors.includes(playerId)) {
-    result.prompt = promptFor(state, playerId, players);
+    const role = state.stages[state.stageIndex];
+    if (role) result.prompt = promptFor(state, playerId, players, role);
+  }
+  if (
+    options.nightDiscoveries !== false &&
+    (state.phase === "night" || state.phase === "day" || state.phase === "vote")
+  ) {
+    result.privateResults = state.privateResults[playerId] ?? [];
   }
   if (state.phase === "day" && state.dayEndsAt) result.endsAt = state.dayEndsAt;
   if (state.phase === "vote") {

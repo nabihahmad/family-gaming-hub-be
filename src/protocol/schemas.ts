@@ -8,6 +8,7 @@ const baseOptions = z
     packs: z.array(z.string().min(1).max(40)).max(10).optional(),
     imposters: z.number().int().min(1).max(3).optional(),
     roles: z.array(z.string().min(1).max(32)).max(18).optional(),
+    nightDiscoveries: z.boolean().optional(),
   })
   .strict();
 

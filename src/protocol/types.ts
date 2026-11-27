@@ -12,6 +12,7 @@ export interface GameOptions {
   packs?: string[];
   imposters?: number;
   roles?: string[];
+  nightDiscoveries?: boolean;
 }
 
 export interface RoomState {

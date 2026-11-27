@@ -165,6 +165,62 @@ describe("Imposter", () => {
 });
 
 describe("Werewolves", () => {
+  it("omits night discoveries from every player's view when the host disables them", () => {
+    const ctx = context(
+      {
+        lang: "en",
+        roles: ["werewolf", "seer", "robber", "villager", "villager", "villager"],
+        nightDiscoveries: false,
+      },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "day";
+    state.privateResults.p1 = [
+      { kind: "seer", cards: [{ target: "center-0", role: "werewolf" }] },
+    ];
+
+    for (const player of ctx.players) {
+      expect(werewolvesGame.view(state, player.id, ctx.players, ctx.options)).not.toHaveProperty(
+        "view.privateResults",
+      );
+    }
+    expect(
+      werewolvesGame.view(state, "p1", ctx.players, {
+        ...ctx.options,
+        nightDiscoveries: true,
+      }),
+    ).toMatchObject({
+      view: { privateResults: [{ kind: "seer" }] },
+    });
+  });
+
+  it("shows all three center cards to a solo Werewolf and accepts one choice", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "villager", "villager", "villager", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "night";
+    state.stages = ["werewolf"];
+    state.stageIndex = 0;
+    state.stageActors = ["p1"];
+    state.originalRoles = { p1: "werewolf", p2: "villager", p3: "villager" };
+    state.roles = { ...state.originalRoles };
+
+    expect(state.center).toHaveLength(3);
+    expect(werewolvesGame.view(state, "p1", ctx.players, ctx.options)).toMatchObject({
+      view: { prompt: { kind: "werewolf", options: { center: 3, min: 1, max: 1 } } },
+    });
+
+    werewolvesGame.handle(state, "p1", event("night_action", { targets: ["center-2"] }), ctx);
+    expect(state.privateResults.p1).toEqual([
+      { kind: "werewolf", cards: [{ target: "center-2", role: state.center[2] }] },
+    ]);
+  });
+
   it("keeps roles private through reveal, night, day, and vote, then publishes final results", () => {
     let now = 1_000;
     const ctx = context(
@@ -196,7 +252,14 @@ describe("Werewolves", () => {
     now += 10_000;
     werewolvesGame.onTimer?.(state, ctx);
     expect(state.phase).toBe("day");
-    expect(JSON.stringify(werewolvesGame.view(state, "p2", ctx.players, ctx.options))).not.toContain('"werewolf"');
+    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        privateResults: [{ kind: "seer", cards: [{ target: "p1", role: "werewolf" }] }],
+      },
+    });
+    expect(JSON.stringify(werewolvesGame.view(state, "p2", ctx.players, ctx.options))).not.toContain(
+      '"target":"p3","role":"werewolf"',
+    );
 
     werewolvesGame.handle(state, "p1", event("end_day"), ctx);
     expect(state.phase).toBe("vote");
@@ -259,6 +322,222 @@ describe("Werewolves", () => {
     expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
     expect(state.stageIndex).toBe(1);
     expect(state.stageActors).toEqual([]);
+  });
+
+  it("shows the Robber the stolen card and keeps the private result through day", () => {
+    let now = 1_000;
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "villager", "villager", "villager"] },
+      players.slice(0, 3),
+      [],
+      () => now,
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "night";
+    state.stages = ["robber"];
+    state.stageIndex = 0;
+    state.stageActors = ["p1"];
+    state.stageEndsAt = now + 10_000;
+    state.roles = { p1: "robber", p2: "villager", p3: "seer" };
+
+    werewolvesGame.handle(state, "p1", event("night_action", { targets: ["p2"] }), ctx);
+
+    expect(werewolvesGame.view(state, "p1", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        prompt: { kind: "robber", result: [{ target: "p1", role: "villager" }] },
+      },
+    });
+    expect(JSON.stringify(werewolvesGame.view(state, "p2", ctx.players, ctx.options))).not.toContain(
+      '"role":"villager"',
+    );
+
+    now += 10_000;
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+    expect(state.phase).toBe("day");
+    expect(werewolvesGame.view(state, "p1", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        privateResults: [{ kind: "robber", cards: [{ target: "p1", role: "villager" }] }],
+      },
+    });
+  });
+
+  it("preserves the original role's power after a Robber swap", () => {
+    let now = 1_000;
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "troublemaker", "villager", "villager"] },
+      players.slice(0, 3),
+      [],
+      () => now,
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "night";
+    state.stages = ["robber", "troublemaker"];
+    state.stageIndex = 0;
+    state.stageActors = ["p1"];
+    state.stageEndsAt = now + 10_000;
+    state.originalRoles = { p1: "robber", p2: "troublemaker", p3: "villager" };
+    state.roles = { ...state.originalRoles };
+
+    werewolvesGame.handle(state, "p1", event("night_action", { targets: ["p2"] }), ctx);
+    now += 10_000;
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+
+    expect(state.roles).toEqual({ p1: "troublemaker", p2: "robber", p3: "villager" });
+    expect(state.stageActors).toEqual(["p2"]);
+    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        myRole: "troublemaker",
+        prompt: { kind: "troublemaker" },
+      },
+    });
+    expect(werewolvesGame.view(state, "p1", ctx.players, ctx.options)).toMatchObject({
+      view: { myRole: "robber" },
+    });
+    expect(JSON.stringify(werewolvesGame.view(state, "p1", ctx.players, ctx.options))).not.toContain(
+      '"kind":"troublemaker"',
+    );
+
+    werewolvesGame.handle(state, "p2", event("night_action", { targets: ["p1", "p3"] }), ctx);
+    expect(state.roles).toEqual({ p1: "villager", p2: "robber", p3: "troublemaker" });
+    expect(() =>
+      werewolvesGame.handle(state, "p1", event("night_action", { targets: ["p2", "p3"] }), ctx),
+    ).toThrow();
+  });
+
+  it("retains the Seer's selected center-card results privately", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "villager", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "night";
+    state.stages = ["seer"];
+    state.stageIndex = 0;
+    state.stageActors = ["p2"];
+    state.stageEndsAt = ctx.now() + 10_000;
+    state.roles = { p1: "villager", p2: "seer", p3: "werewolf" };
+    state.center = ["tanner", "robber", "mason"];
+
+    werewolvesGame.handle(state, "p2", event("night_action", { targets: ["center-0", "center-1"] }), ctx);
+
+    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        prompt: {
+          kind: "seer",
+          result: [
+            { target: "center-0", role: "tanner" },
+            { target: "center-1", role: "robber" },
+          ],
+        },
+        privateResults: [
+          {
+            kind: "seer",
+            cards: [
+              { target: "center-0", role: "tanner" },
+              { target: "center-1", role: "robber" },
+            ],
+          },
+        ],
+      },
+    });
+    expect(JSON.stringify(werewolvesGame.view(state, "p1", ctx.players, ctx.options))).not.toContain('"role":"tanner"');
+  });
+
+  it("shows the Seer's selected player's card", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "villager", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "night";
+    state.stages = ["seer"];
+    state.stageIndex = 0;
+    state.stageActors = ["p2"];
+    state.stageEndsAt = ctx.now() + 10_000;
+    state.roles = { p1: "villager", p2: "seer", p3: "werewolf" };
+
+    werewolvesGame.handle(state, "p2", event("night_action", { targets: ["p3"] }), ctx);
+
+    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        prompt: { kind: "seer", result: [{ target: "p3", role: "werewolf" }] },
+        privateResults: [{ kind: "seer", cards: [{ target: "p3", role: "werewolf" }] }],
+      },
+    });
+  });
+
+  it("lets the original Insomniac see their final card, but not the Robber who stole it", () => {
+    let now = 1_000;
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "insomniac", "villager", "villager"] },
+      players.slice(0, 3),
+      [],
+      () => now,
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.stages = ["robber", "insomniac"];
+    state.stageIndex = 0;
+    state.roles = { p1: "robber", p2: "insomniac", p3: "villager" };
+    state.originalRoles = { ...state.roles };
+    state.acked = ["p1", "p2"];
+    werewolvesGame.handle(state, "p3", event("ack_role"), ctx);
+
+    werewolvesGame.handle(state, "p1", event("night_action", { targets: ["p2"] }), ctx);
+    now += 10_000;
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+
+    expect(state.roles).toEqual({ p1: "insomniac", p2: "robber", p3: "villager" });
+    expect(state.stageActors).toEqual(["p2"]);
+    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        prompt: { kind: "insomniac", result: [{ target: "p2", role: "robber" }] },
+        privateResults: [{ kind: "insomniac", cards: [{ target: "p2", role: "robber" }] }],
+      },
+    });
+    expect(werewolvesGame.view(state, "p1", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        privateResults: [{ kind: "robber", cards: [{ target: "p1", role: "insomniac" }] }],
+      },
+    });
+
+    now += 10_000;
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+    expect(state.phase).toBe("day");
+    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).toMatchObject({
+      view: { privateResults: [{ kind: "insomniac", cards: [{ target: "p2", role: "robber" }] }] },
+    });
+    expect(werewolvesGame.view(state, "p1", ctx.players, ctx.options)).toMatchObject({
+      view: { privateResults: [{ kind: "robber" }] },
+    });
+  });
+
+  it("lets the original Insomniac check their card even when it did not change", () => {
+    const ctx = context(
+      { lang: "en", roles: ["werewolf", "seer", "robber", "insomniac", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.stages = ["insomniac"];
+    state.stageIndex = 0;
+    state.roles = { p1: "werewolf", p2: "insomniac", p3: "villager" };
+    state.originalRoles = { ...state.roles };
+    state.acked = ["p1", "p2"];
+
+    werewolvesGame.handle(state, "p3", event("ack_role"), ctx);
+
+    expect(state.stageActors).toEqual(["p2"]);
+    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        prompt: { kind: "insomniac", result: [{ target: "p2", role: "insomniac" }] },
+        privateResults: [{ kind: "insomniac", cards: [{ target: "p2", role: "insomniac" }] }],
+      },
+    });
   });
 
   it("starts the timed vote when the host ends the day early", () => {

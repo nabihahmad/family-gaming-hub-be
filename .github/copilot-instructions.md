@@ -25,6 +25,7 @@ Primary goals: fast to set up, low latency, simple to run on free tiers, easy to
 - Single instance only: do not design for horizontal scaling.
 
 ### Environment variables
+
 | Name | Purpose |
 |---|---|
 | `PORT` | HTTP port (Render sets it) |
@@ -135,6 +136,7 @@ interface GameOptions {
   packs?: string[];
   imposters?: number;      // imposter, default 1, max floor((players-1)/2) but at least 1
   roles?: string[];        // werewolves
+  nightDiscoveries?: boolean; // werewolves, defaults to true
 }
 
 interface RoomState {
@@ -148,6 +150,7 @@ interface RoomState {
 ```
 
 ### 5.3 Client → server
+
 | type | payload | notes |
 |---|---|---|
 | `join` | `{ roomCode, name, accessToken, playerId?, token? }` | Requires an active admin or guest access session. If `playerId` and `token` match an existing player of that room → reconnect (mark connected, replace old socket). Otherwise create a new player with a server-generated public `playerId` and a secret random `token`. Name 1–20 chars, trimmed, sanitized, de-duplicated per room (append " 2"). |
@@ -158,6 +161,7 @@ interface RoomState {
 | `ping` | `{}` | Reply `pong`. |
 
 ### 5.4 Server → client
+
 | type | payload |
 |---|---|
 | `joined` | `{ playerId, token, roomCode }` |
@@ -179,7 +183,6 @@ Error codes: `ROOM_NOT_FOUND`, `ROOM_FULL`, `NOT_HOST`, `INVALID_PHASE`, `INVALI
 ## 6. Cards and MongoDB
 
 ### 6.1 Collections
-
 ```ts
 // packs
 { _id: "animals", name: { en: "Animals", ar: "حيوانات" }, games: ["codenames","imposter"], active: true }
@@ -197,6 +200,7 @@ Error codes: `ROOM_NOT_FOUND`, `ROOM_FULL`, `NOT_HOST`, `INVALID_PHASE`, `INVALI
   updatedAt: Date
 }
 ```
+
 - A card may exist in only one language. It is only eligible for games in languages it has.
 - Indexes: `{ active: 1, games: 1, pack: 1 }`; unique partial index on `enNorm` (where it exists) and on `arNorm` (where it exists).
 - **Arabic normalization** (`normalize.ts`): remove tashkeel and tatweel; unify alef forms (أ إ آ → ا); normalize ى→ي and ة→ه for the dedupe key only (never alter the displayed word); trim and collapse whitespace.
@@ -212,6 +216,7 @@ Error codes: `ROOM_NOT_FOUND`, `ROOM_FULL`, `NOT_HOST`, `INVALID_PHASE`, `INVALI
 
 ### 6.3 Admin API (for editing without redeploying)
 All require `Authorization: Bearer ${ADMIN_TOKEN}` (constant-time comparison); return 401 otherwise.
+
 - `GET /api/admin/cards?pack=&game=&q=&page=&limit=`
 - `POST /api/admin/cards` (create; compute norm fields; reject duplicates with 409)
 - `PUT /api/admin/cards/:id`
@@ -250,16 +255,15 @@ All require `Authorization: Bearer ${ADMIN_TOKEN}` (constant-time comparison); r
 - Role ids: `doppelganger`, `werewolf`, `minion`, `mason`, `seer`, `robber`, `troublemaker`, `drunk`, `insomniac`, `villager`, `hunter`, `tanner`.
 - Phases: `role_reveal` → `night` → `day` → `vote` → `result`.
   - `role_reveal`: each player sees their role; `ack_role` when seen.
-  - `night`: run roles in the canonical order (doppelganger, werewolf, minion, mason, seer, robber, troublemaker, drunk, insomniac). Only roles present in the game take a step. For each step, the server sends the prompt only to the acting player(s); everyone else gets a neutral "night" view. **Each step has a minimum duration (e.g. 8–15 seconds) even if no player acts or the player acts quickly**, so timing doesn't reveal who holds which role. Roles that exist only in the center still run their step on a timer.
+  - `night`: run roles in the canonical order (doppelganger, werewolf, minion, mason, seer, robber, troublemaker, drunk, insomniac). Only roles present in the game take a step. Night powers belong to the originally dealt role: a Robber who steals a role card does not gain its power, and the original role holder still performs that role's action. A player acts at most once per night. The player originally dealt the Insomniac card always checks their final card at the end of the night, even if it changed; stealing that card does not grant another player an Insomniac check. For each step, the server sends the prompt only to the acting player(s); everyone else gets a neutral "night" view. **Each step has a minimum duration (e.g. 8–15 seconds) even if no player acts or the player acts quickly**, so timing doesn't reveal who holds which role. Roles that exist only in the center still run their step on a timer.
   - Each role is a small module: `(state, action) => { state, privateResult }`, with a validated action schema. Actions are `night_action` `{ targets: string[] }` where targets are player ids or `center:0|1|2`.
   - `day`: a timer (default 5 minutes, configurable) with `endsAt`; host can end it early.
   - `vote`: `vote` `{ target }`, secret until all have voted or the 10-second timer expires. The host may end the day early to start this vote.
   - `result`: reveal everyone's final role (after swaps), compute the winners (werewolf team, villager team, tanner), and handle ties and the hunter's chain kill. A tie kills nobody and gives the Werewolf team the win.
-- Views: never reveal original/current roles other than what the player legitimately learned; the view includes the player's *original* role card (as dealt) and any private night results they received.
+- Views: never reveal original/current roles other than what the player legitimately learned. Keep each player's observed card results in their private projection through the discussion and vote phases; the Robber sees their swapped-in card, the Seer sees selected cards, and the player originally dealt the Insomniac card sees their final card. When `nightDiscoveries` is enabled (default), show the discoveries panel to everyone during discussion and voting, but reveal its player-specific contents only while held. When disabled, omit the panel and its discovery data from every player's view.
 - Events: `ack_role`, `night_action`, `vote`, `end_day` (host), `end_game` (host; ends the discussion early and starts the 10-second vote), `next_game` (host).
 
 ## 8. Security and robustness
-
 - Never trust client data. Validate everything with zod; authorize every event (is the sender the host? is it their turn? is the phase right?).
 - Passwords are stored with a salted scrypt hash. Access codes and bearer sessions are random; only their hashes are used to validate guest codes and access sessions.
 - Admin logout revokes the active access code and every session under it, closes their WebSockets, and makes subsequent HTTP and WebSocket actions fail authorization.
@@ -271,14 +275,12 @@ All require `Authorization: Bearer ${ADMIN_TOKEN}` (constant-time comparison); r
 - Keep dependencies minimal.
 
 ## 9. Testing
-
 - Unit tests for each game's logic with a seeded RNG: setup, every event, win conditions, illegal actions.
 - **Projection tests are mandatory:** for every game and phase, assert that no other player's secret appears anywhere in `JSON.stringify(view(state, otherPlayerId))`.
 - Tests for card selection (language filter, duplicates, not enough cards) and Arabic normalization.
 - A WebSocket integration test: create room, two clients join, select a game, start, play a few events, reconnect with the token.
 
 ## 10. Coding conventions for Copilot
-
 - TypeScript strict, no `any`. Use discriminated unions for events and states.
 - Small modules, pure functions for game rules, dependency injection for RNG and time.
 - Prefer clear names and short comments for non-obvious rules (especially Werewolves).
@@ -287,7 +289,6 @@ All require `Authorization: Bearer ${ADMIN_TOKEN}` (constant-time comparison); r
 - Keep responses of `game_view` small; do not send data the client can derive.
 
 ## 11. Build order
-
 1. Project setup, config, `/health`, RoomManager, WebSocket join/reconnect, lobby state, heartbeat, cleanup.
 2. Card repo/cache/selection, `/api/packs`, seed script.
 3. Imposter module + tests.
