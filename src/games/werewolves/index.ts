@@ -27,6 +27,7 @@ const nightOrder: WerewolvesRole[] = [
   "drunk",
   "insomniac",
 ];
+const dayOrder: WerewolvesRole[] = ["villager", "hunter", "tanner"];
 const nightStepMs = 10_000;
 const dayDurationMs = 5 * 60_000;
 const voteDurationMs = 10_000;
@@ -80,12 +81,7 @@ function resizeRoleDeck(roles: string[] | undefined, playerCount: number): Werew
 
 function connectedActors(state: WerewolvesState, role: WerewolvesRole, ctx: GameContext): string[] {
   return ctx.players
-    .filter(
-      (player) =>
-        player.connected &&
-        state.originalRoles[player.id] === role &&
-        !state.acted.includes(player.id),
-    )
+    .filter((player) => player.connected && state.originalRoles[player.id] === role && !state.acted.includes(player.id))
     .map((player) => player.id);
 }
 
@@ -411,7 +407,13 @@ function view(value: unknown, playerId: string, players: GameContext["players"],
     result.privateResults = state.privateResults[playerId] ?? [];
   }
   if (state.phase === "day" || state.phase === "vote") {
-    result.availableRoles = [...Object.values(state.originalRoles), ...state.center];
+    const roleCounts = new Map<WerewolvesRole, number>();
+    for (const role of [...Object.values(state.originalRoles), ...state.center]) {
+      roleCounts.set(role, (roleCounts.get(role) ?? 0) + 1);
+    }
+    result.availableRoles = [...nightOrder, ...dayOrder]
+      .filter((role) => roleCounts.has(role))
+      .map((role) => ({ role, count: roleCounts.get(role)! }));
   }
   if (state.phase === "day" && state.dayEndsAt) result.endsAt = state.dayEndsAt;
   if (state.phase === "vote") {

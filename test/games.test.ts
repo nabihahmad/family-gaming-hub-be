@@ -308,9 +308,7 @@ describe("Werewolves", () => {
     for (const player of ctx.players) werewolvesGame.handle(state, player.id, event("ack_role"), ctx);
     expect(state.phase).toBe("night");
     expect(JSON.stringify(werewolvesGame.view(state, "p2", ctx.players, ctx.options))).not.toContain('"prompt"');
-    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).not.toHaveProperty(
-      "view.availableRoles",
-    );
+    expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).not.toHaveProperty("view.availableRoles");
     werewolvesGame.handle(state, "p1", event("night_action", { targets: ["center-0"] }), ctx);
     now += 10_000;
     werewolvesGame.onTimer?.(state, ctx);
@@ -328,7 +326,13 @@ describe("Werewolves", () => {
     expect(werewolvesGame.view(state, "p2", ctx.players, ctx.options)).toMatchObject({
       view: {
         privateResults: [{ kind: "seer", cards: [{ target: "p1", role: "werewolf" }] }],
-        availableRoles: [...Object.values(state.originalRoles), ...state.center],
+        availableRoles: [
+          { role: "werewolf", count: 1 },
+          { role: "minion", count: 1 },
+          { role: "seer", count: 1 },
+          { role: "robber", count: 1 },
+          { role: "villager", count: 2 },
+        ],
       },
     });
     expect(JSON.stringify(werewolvesGame.view(state, "p2", ctx.players, ctx.options))).not.toContain(
