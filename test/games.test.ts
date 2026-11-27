@@ -522,6 +522,57 @@ describe("Werewolves", () => {
     expect(JSON.stringify(werewolvesGame.view(state, "p1", ctx.players, ctx.options))).not.toContain('"role":"tanner"');
   });
 
+  it("keeps center indexes stable when a card is seen and later taken", () => {
+    let now = 1_000;
+    const ctx = context(
+      { lang: "en", roles: ["seer", "drunk", "werewolf", "mason", "werewolf", "tanner"] },
+      players.slice(0, 3),
+      [],
+      () => now,
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "night";
+    state.originalRoles = { p1: "seer", p2: "drunk", p3: "werewolf" };
+    state.roles = { ...state.originalRoles };
+    state.center = ["mason", "werewolf", "tanner"];
+    state.stages = ["seer", "drunk"];
+    state.stageIndex = 0;
+    state.stageActors = ["p1"];
+    state.stageEndsAt = now + 10_000;
+
+    werewolvesGame.handle(state, "p1", event("night_action", { targets: ["center-1", "center-0"] }), ctx);
+    now += 10_000;
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+    expect(state.stageActors).toEqual(["p2"]);
+    werewolvesGame.handle(state, "p2", event("night_action", { targets: ["center-1"] }), ctx);
+    now += 10_000;
+    expect(werewolvesGame.onTimer?.(state, ctx)).toBe(true);
+
+    expect(state.roles.p2).toBe("werewolf");
+    expect(state.center[1]).toBe("drunk");
+    expect(werewolvesGame.view(state, "p1", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        privateResults: [
+          {
+            kind: "seer",
+            cards: [
+              { target: "center-1", role: "werewolf" },
+              { target: "center-0", role: "mason" },
+            ],
+          },
+        ],
+        availableRoles: [
+          { role: "werewolf", count: 2 },
+          { role: "mason", count: 1 },
+          { role: "seer", count: 1 },
+          { role: "drunk", count: 1 },
+          { role: "tanner", count: 1 },
+        ],
+      },
+    });
+  });
+
   it("shows the Seer's selected player's card", () => {
     const ctx = context(
       { lang: "en", roles: ["werewolf", "seer", "robber", "villager", "villager", "villager"] },

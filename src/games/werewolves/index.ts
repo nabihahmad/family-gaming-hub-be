@@ -408,7 +408,7 @@ function view(value: unknown, playerId: string, players: GameContext["players"],
   }
   if (state.phase === "day" || state.phase === "vote") {
     const roleCounts = new Map<WerewolvesRole, number>();
-    for (const role of [...Object.values(state.originalRoles), ...state.center]) {
+    for (const role of [...Object.values(state.roles), ...state.center]) {
       roleCounts.set(role, (roleCounts.get(role) ?? 0) + 1);
     }
     result.availableRoles = [...nightOrder, ...dayOrder]
