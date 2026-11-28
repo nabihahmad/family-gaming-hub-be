@@ -139,6 +139,7 @@ function init(ctx: GameContext): WerewolvesState {
     game: "werewolves",
     phase: "role_reveal",
     originalRoles,
+    initialCenter: roles.slice(players.length),
     roles: { ...originalRoles },
     center: roles.slice(players.length),
     acked: [],
@@ -408,7 +409,7 @@ function view(value: unknown, playerId: string, players: GameContext["players"],
   }
   if (state.phase === "day" || state.phase === "vote") {
     const roleCounts = new Map<WerewolvesRole, number>();
-    for (const role of [...Object.values(state.roles), ...state.center]) {
+    for (const role of [...Object.values(state.originalRoles), ...state.initialCenter]) {
       roleCounts.set(role, (roleCounts.get(role) ?? 0) + 1);
     }
     result.availableRoles = [...nightOrder, ...dayOrder]

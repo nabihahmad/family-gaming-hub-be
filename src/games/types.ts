@@ -51,6 +51,7 @@ export interface WerewolvesState {
   game: "werewolves";
   phase: "role_reveal" | "night" | "day" | "vote" | "result";
   originalRoles: Record<string, WerewolvesRole>;
+  initialCenter: WerewolvesRole[];
   roles: Record<string, WerewolvesRole>;
   center: WerewolvesRole[];
   acked: string[];

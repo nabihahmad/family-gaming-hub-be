@@ -573,6 +573,39 @@ describe("Werewolves", () => {
     });
   });
 
+  it("shows the originally selected role cards after a Doppelganger copies a role", () => {
+    const ctx = context(
+      { lang: "en", roles: ["doppelganger", "minion", "werewolf", "villager", "villager", "villager"] },
+      players.slice(0, 3),
+    );
+    const state = werewolvesGame.init(ctx);
+    if (state.game !== "werewolves") throw new Error("Unexpected game state.");
+    state.phase = "night";
+    state.originalRoles = { p1: "doppelganger", p2: "minion", p3: "werewolf" };
+    state.roles = { ...state.originalRoles };
+    state.initialCenter = ["villager", "villager", "villager"];
+    state.center = [...state.initialCenter];
+    state.stages = ["doppelganger"];
+    state.stageIndex = 0;
+    state.stageActors = ["p1"];
+    state.stageEndsAt = ctx.now() + 10_000;
+
+    werewolvesGame.handle(state, "p1", event("night_action", { targets: ["p2"] }), ctx);
+    state.phase = "day";
+
+    expect(state.roles.p1).toBe("minion");
+    expect(werewolvesGame.view(state, "p1", ctx.players, ctx.options)).toMatchObject({
+      view: {
+        availableRoles: [
+          { role: "doppelganger", count: 1 },
+          { role: "werewolf", count: 1 },
+          { role: "minion", count: 1 },
+          { role: "villager", count: 3 },
+        ],
+      },
+    });
+  });
+
   it("shows the Seer's selected player's card", () => {
     const ctx = context(
       { lang: "en", roles: ["werewolf", "seer", "robber", "villager", "villager", "villager"] },
